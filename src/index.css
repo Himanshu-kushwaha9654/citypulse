@@ -1,0 +1,391 @@
+@import "tailwindcss";
+
+/* ----------------------------------------------------
+   TYPE SYSTEM — single source of truth for every font
+   and text-size token used across the site. Previously
+   `font-heading` (32 usages) and `font-mono` (39 usages)
+   had no matching --font-* token, so they silently did
+   nothing / fell back to generic system fonts, and the
+   `font-sans` class on <body> (utilities layer) was
+   overriding the intended body font (base layer) — the
+   root cause of the inconsistent/"random" look. Every
+   font-family and text-size in the app now traces back
+   to one of the tokens below.
+   ---------------------------------------------------- */
+@theme {
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-heading: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* One deliberate micro-caption size, replacing the text-[9px]/[10px]/[11px]
+     mix scattered across the app with a single consistent step. */
+  --text-micro: 0.6875rem;      /* 11px */
+  --text-micro--line-height: 1rem;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #E4ECE0;
+    color: #1A2318;
+    background-image:
+      radial-gradient(circle at 12% 15%, rgba(94, 115, 82, 0.08), transparent 50%),
+      radial-gradient(circle at 88% 25%, rgba(120, 145, 108, 0.08), transparent 50%),
+      radial-gradient(circle at 50% 75%, rgba(84, 104, 74, 0.06), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ----------------------------------------------------
+   CITYPULSE LIGHT SAGE & WHITE LUXURY COLOR SYSTEM
+   ---------------------------------------------------- */
+
+:root {
+  --sage-main: #5E7352;
+  --sage-dark: #1A2318;
+  --sage-accent: #4B5D41;
+  --sage-bg: #E4ECE0;
+  --sage-card: #FFFFFF;
+  --sage-border: rgba(84, 104, 74, 0.16);
+}
+
+/* Card Base & Hover Physics */
+.smart-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(84, 104, 74, 0.16);
+  border-radius: 1.5rem; /* 24px */
+  box-shadow: 0 10px 30px -5px rgba(28, 38, 25, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: transform 250ms ease-out, border-color 250ms ease-out, box-shadow 250ms ease-out, background 250ms ease-out;
+  position: relative;
+  overflow: hidden;
+  color: #1A2318;
+}
+
+.smart-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(84, 104, 74, 0.32);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 6px 16px rgba(0, 0, 0, 0.03);
+}
+
+/* Category Card Glows */
+.card-glow-traffic {
+  background: radial-gradient(circle at 15% 15%, rgba(217, 119, 6, 0.04), transparent 65%), #FFFFFF;
+}
+.card-glow-traffic:hover {
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 0 20px rgba(217, 119, 6, 0.08);
+}
+
+.card-glow-aqi {
+  background: radial-gradient(circle at 15% 15%, rgba(75, 107, 64, 0.05), transparent 65%), #FFFFFF;
+}
+.card-glow-aqi:hover {
+  border-color: rgba(75, 107, 64, 0.35);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 0 20px rgba(75, 107, 64, 0.08);
+}
+
+.card-glow-weather {
+  background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.04), transparent 65%), #FFFFFF;
+}
+.card-glow-weather:hover {
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 0 20px rgba(37, 99, 235, 0.08);
+}
+
+.card-glow-transit {
+  background: radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.04), transparent 65%), #FFFFFF;
+}
+.card-glow-transit:hover {
+  border-color: rgba(124, 58, 237, 0.35);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 0 20px rgba(124, 58, 237, 0.08);
+}
+
+.card-glow-incidents {
+  background: radial-gradient(circle at 15% 15%, rgba(220, 38, 38, 0.04), transparent 65%), #FFFFFF;
+}
+.card-glow-incidents:hover {
+  border-color: rgba(220, 38, 38, 0.35);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 0 20px rgba(220, 38, 38, 0.08);
+}
+
+.card-glow-utilities {
+  background: radial-gradient(circle at 15% 15%, rgba(217, 119, 6, 0.04), transparent 65%), #FFFFFF;
+}
+.card-glow-utilities:hover {
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 0 20px rgba(217, 119, 6, 0.08);
+}
+
+.card-glow-healthy {
+  background: radial-gradient(circle at 15% 15%, rgba(45, 90, 39, 0.05), transparent 65%), #FFFFFF;
+}
+.card-glow-healthy:hover {
+  border-color: rgba(45, 90, 39, 0.35);
+  box-shadow: 0 18px 36px -6px rgba(28, 38, 25, 0.08), 0 0 20px rgba(45, 90, 39, 0.08);
+}
+
+/* Category Icon Glow Containers */
+.icon-glow-traffic {
+  background: #FEF3C7;
+  border: 1px solid #FCD34D;
+  color: #D97706;
+}
+
+.icon-glow-aqi {
+  background: #EAF2E6;
+  border: 1px solid #B8D4B3;
+  color: #4B6B40;
+}
+
+.icon-glow-weather {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #2563EB;
+}
+
+.icon-glow-transit {
+  background: #F5F3FF;
+  border: 1px solid #DDD6FE;
+  color: #7C3AED;
+}
+
+.icon-glow-incidents {
+  background: #FEE2E2;
+  border: 1px solid #FCA5A5;
+  color: #DC2626;
+}
+
+.icon-glow-utilities {
+  background: #FEF3C7;
+  border: 1px solid #FCD34D;
+  color: #D97706;
+}
+
+.icon-glow-healthy {
+  background: #E4F0E2;
+  border: 1px solid #A8CAA4;
+  color: #2D5A27;
+}
+
+/* Category Badges & Pills */
+.badge-traffic {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FCD34D;
+}
+
+.badge-aqi {
+  background: #EAF2E6;
+  color: #2D4226;
+  border: 1px solid #B8D4B3;
+}
+
+.badge-weather {
+  background: #EFF6FF;
+  color: #1E40AF;
+  border: 1px solid #BFDBFE;
+}
+
+.badge-transit {
+  background: #F5F3FF;
+  color: #5B21B6;
+  border: 1px solid #DDD6FE;
+}
+
+.badge-incidents {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
+}
+
+.badge-utilities {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FCD34D;
+}
+
+.badge-healthy {
+  background: #E4F0E2;
+  color: #1E3A1A;
+  border: 1px solid #A8CAA4;
+}
+
+/* Pulsing & Marker Glow Animations */
+@keyframes live-pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px #4B6B40;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 3px #4B6B40;
+    transform: scale(0.92);
+  }
+}
+
+.live-dot-glow {
+  background-color: #4B6B40;
+  box-shadow: 0 0 8px #4B6B40;
+  animation: live-pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes marker-pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.4), 0 0 18px rgba(220, 38, 38, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.7), 0 0 30px rgba(220, 38, 38, 0.35);
+  }
+}
+
+.marker-pulse-active {
+  animation: marker-pulse-red 2s infinite ease-in-out;
+}
+
+/* ----------------------------------------------------
+   LEAFLET OPENSTREETMAP LIGHT SAGE STYLES
+   ---------------------------------------------------- */
+
+.leaflet-container {
+  background-color: #DDE7D8 !important;
+  font-family: var(--font-sans) !important;
+  z-index: 10;
+}
+
+/* Light Theme Integration for OpenStreetMap tiles */
+.leaflet-tile-pane {
+  filter: contrast(0.96) saturate(0.85) hue-rotate(-5deg) brightness(1.02);
+}
+
+/* Custom Marker reset */
+.citypulse-custom-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Light Glass Leaflet Popup */
+.citypulse-leaflet-popup .leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid #D5E0CC !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 16px !important;
+  padding: 0 !important;
+  box-shadow: 0 16px 36px -6px rgba(28, 38, 25, 0.14) !important;
+  color: #1A2318 !important;
+}
+
+.citypulse-leaflet-popup .leaflet-popup-content {
+  margin: 0 !important;
+  line-height: inherit !important;
+}
+
+.citypulse-leaflet-popup .leaflet-popup-tip {
+  background: #FFFFFF !important;
+  border: 1px solid #D5E0CC !important;
+}
+
+/* Attribution styling preservation */
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: #4A5B44 !important;
+  font-size: var(--text-micro) !important;
+  font-family: var(--font-mono) !important;
+  border-radius: 6px 0 0 0 !important;
+  padding: 2px 6px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #3A4E34 !important;
+  font-weight: 600;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E4ECE0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B4C6AD;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9BB293;
+}
+
+/* Recharts Responsive Fix */
+.recharts-responsive-container {
+  min-height: 160px;
+}
+
+/* Desktop Quick Hover Tooltip Styling */
+.citypulse-hover-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.citypulse-hover-tooltip::before {
+  display: none !important;
+}
+
+.citypulse-search-marker,
+.citypulse-user-location-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+/* ── Premium range slider thumb for SettingsModal ── */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #5E7352;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px rgba(94,115,82,0.2);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #5E7352;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+input[type="range"]:focus {
+  outline: none;
+}
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(94,115,82,0.25);
+}
