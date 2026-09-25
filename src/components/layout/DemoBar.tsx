@@ -100,7 +100,7 @@ export const DemoBar: React.FC = () => {
       >
         
         {/* Left Section: Main Play / Pause Button & Scenario Selector */}
-        <div className="flex items-center space-x-2.5 overflow-hidden">
+        <div className="flex items-center space-x-2.5">
           
           {/* Main Action Toggle Button */}
           <button

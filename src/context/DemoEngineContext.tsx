@@ -128,118 +128,14 @@ export const DemoEngineProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
     }
 
-    // If backend is connected, DO NOT accumulate local state (let Realtime subscriptions handle it)
-    if (isSupabaseConfigured()) {
-      setDemoPulseScoreDrop(0);
-      setDemoIncidents([]);
-      setDemoAlerts([]);
-      setDemoAnomalies([]);
-      setActiveMetricShifts({});
-      setDemoLastUpdate(Date.now());
-
-      if (scenario.steps[stepIdx]) {
-        const currentStep = scenario.steps[stepIdx];
-
-        // Direct insertion to DB (bypasses the ingest-telemetry Edge Function,
-        // which requires an authenticated operator/admin call). The demo
-        // engine always simulates Jaipur regardless of the selected city.
-        (async () => {
-          const cityId = await resolveCityDbId('jaipur');
-          if (!cityId) {
-            console.warn('Demo engine: could not resolve Jaipur city id, skipping DB writes.');
-            return;
-          }
-
-          const inserts = [];
-
-          if (currentStep.mapIncident) {
-            inserts.push(supabase.from('civic_events').insert({
-              city_id: cityId,
-              type: signalTypeToDbEventType(currentStep.mapIncident.type) || 'incident',
-              title: currentStep.mapIncident.title,
-              description: currentStep.mapIncident.description,
-              latitude: currentStep.mapIncident.location?.lat,
-              longitude: currentStep.mapIncident.location?.lng,
-              severity: currentStep.mapIncident.severity || 'medium',
-              value: currentStep.mapIncident.value,
-              source: 'demo_engine'
-            }));
-          }
-
-          if (currentStep.anomalyItem) {
-            inserts.push(supabase.from('anomalies').insert({
-              city_id: cityId,
-              metric_type: currentStep.anomalyItem.category,
-              observed_value: currentStep.anomalyItem.currentValue,
-              baseline_value: currentStep.anomalyItem.baselineValue,
-              deviation: currentStep.anomalyItem.factorAboveBaseline,
-              severity: currentStep.anomalyItem.severity || 'high',
-              explanation: currentStep.anomalyItem.description,
-              metadata: { relatedSignals: currentStep.anomalyItem.relatedSignals }
-            }));
-          }
-
-          if (currentStep.alertItem) {
-            inserts.push(supabase.from('alerts').insert({
-              city_id: cityId,
-              type: currentStep.alertItem.type || 'info',
-              title: currentStep.alertItem.title,
-              message: currentStep.alertItem.message,
-              severity: alertUiSeverityToDb(currentStep.alertItem.severity || 'warning'),
-              metric_type: currentStep.alertItem.type,
-              acknowledged: false
-            }));
-          }
-
-          if (currentStep.pulseDrop) {
-            inserts.push(
-              supabase.from('city_pulse').select('*').eq('city_id', cityId).order('calculated_at', { ascending: false }).limit(1).single()
-                .then(({ data: currentPulse }) => {
-                  const oldScore = currentPulse?.score || 82;
-                  const newScore = Math.max(0, oldScore - currentStep.pulseDrop!);
-                  return supabase.from('city_pulse').insert({
-                    city_id: cityId,
-                    score: newScore,
-                    traffic_score: currentPulse?.traffic_score || 80,
-                    environment_score: currentPulse?.environment_score || 75,
-                    utilities_score: currentPulse?.utilities_score || 85,
-                    safety_score: currentPulse?.safety_score || 78,
-                    status: newScore < 60 ? 'warning' : 'stable'
-                  });
-                })
-            );
-          }
-
-          if (currentStep.metricsShift) {
-            const shift = currentStep.metricsShift;
-            if (shift.trafficCongestionPct !== undefined) {
-              inserts.push(supabase.from('metrics').insert({
-                city_id: cityId, metric_type: 'traffic_flow', value: Math.max(0, 87 - shift.trafficCongestionPct), unit: '%', source: 'demo'
-              }));
-            }
-            if (shift.aqiValue !== undefined) {
-              inserts.push(supabase.from('metrics').insert({
-                city_id: cityId, metric_type: 'aqi', value: shift.aqiValue, unit: 'AQI', source: 'demo'
-              }));
-            }
-            if (shift.utilityLoadPct !== undefined) {
-              inserts.push(supabase.from('metrics').insert({
-                city_id: cityId, metric_type: 'energy_consumption', value: shift.utilityLoadPct > 10 ? (shift.utilityLoadPct / 10) : 2.4, unit: 'GW', source: 'demo'
-              }));
-            }
-          }
-
-          await Promise.all(inserts);
-        })().catch(err => console.warn('Direct DB insertion failed:', err));
-      }
-    } else {
-      setDemoPulseScoreDrop(accumulatedDrop);
-      setDemoIncidents(accumulatedIncidents);
-      setDemoAlerts(accumulatedAlerts);
-      setDemoAnomalies(accumulatedAnomalies);
-      setActiveMetricShifts(accumulatedShifts);
-      setDemoLastUpdate(Date.now());
-    }
+    // The Demo Engine always accumulates state locally to avoid 401 Unauthorized
+    // RLS errors during hackathon submission without Auth implemented.
+    setDemoPulseScoreDrop(accumulatedDrop);
+    setDemoIncidents(accumulatedIncidents);
+    setDemoAlerts(accumulatedAlerts);
+    setDemoAnomalies(accumulatedAnomalies);
+    setActiveMetricShifts(accumulatedShifts);
+    setDemoLastUpdate(Date.now());
   }, []);
 
   // Timer reference
