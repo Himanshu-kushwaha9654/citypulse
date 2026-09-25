@@ -13,10 +13,10 @@ let inFlight: Promise<void> | null = null;
 
 async function loadAllCities(): Promise<void> {
   if (!isSupabaseConfigured()) return;
-  const { data, error } = await supabase.from('cities').select('id, slug');
+  const { data, error } = await supabase.from('cities').select('id, name');
   if (error || !data) return;
-  data.forEach((row: { id: string; slug: string | null }) => {
-    if (row.slug) slugToDbId.set(row.slug, row.id);
+  data.forEach((row: { id: string; name: string }) => {
+    if (row.name) slugToDbId.set(row.name.toLowerCase(), row.id);
   });
 }
 

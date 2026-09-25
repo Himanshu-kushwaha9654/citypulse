@@ -9,6 +9,7 @@ import {
 import { fetchRecentCivicEvents } from './civicEvents';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { CITIES } from '../data/cities';
+import { resolveCityDbId } from './cityResolver';
 
 function generateCityDemoEvents(cityId: string): CityMapEvent[] {
   const city = CITIES.find(c => c.id.toLowerCase() === cityId.toLowerCase());
@@ -49,7 +50,9 @@ function generateCityDemoEvents(cityId: string): CityMapEvent[] {
 export const getMapEvents = async (cityId: string = 'jaipur'): Promise<CityMapEvent[]> => {
   if (isSupabaseConfigured()) {
     try {
-      const dbEvents = await fetchRecentCivicEvents(cityId);
+      const dbUuid = await resolveCityDbId(cityId);
+      if (dbUuid) {
+        const dbEvents = await fetchRecentCivicEvents(dbUuid);
       if (dbEvents.length > 0) {
         const mapped: CityMapEvent[] = dbEvents
           .filter(e => e.latitude && e.longitude)
@@ -69,7 +72,8 @@ export const getMapEvents = async (cityId: string = 'jaipur'): Promise<CityMapEv
             locationName: (e.metadata?.locationName as string) || e.title,
             metadata: e.metadata
           }));
-        return mapped;
+          return mapped;
+        }
       }
     } catch (err) {
       console.warn('Failed fetching map events from Supabase, fallback to static mock:', err);
